@@ -133,14 +133,18 @@ class NeuralNetwork():
             self.layers = []
             self.cost_func = cost_func
             self.learning_rate = learning_rate
+            self.train_val_loss = {'loss':[], 'val_loss':[]}
         
-        def fit(self, x_train, y_train, epochs=100, verbose=10):
+        def fit(self, x_train, y_train,x_test=None, y_test=None, validation=False, epochs=100, verbose=10):
             for epoch in range( epochs + 1):
                 y_pred = self.__feedforward(x_train)
                 self.__backprop(y_train, y_pred)
                 
                 if(epoch % verbose == 0):
                     loss_train = self.cost_func(y_train, self.predict(x_train))
+                    if(validation):
+                        self.train_val_loss['val_loss'].append(self.cost_func(y_test, self.predict(x_test)))
+                    self.train_val_loss['loss'].append(loss_train)
                     print(f"epoch: {epoch:=4}/{epochs:=4} loss_train: {loss_train:.8f}")
         
         def predict(self, x):
